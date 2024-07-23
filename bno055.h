@@ -4283,6 +4283,23 @@ BNO055_RETURN_FUNCTION_TYPE bno055_get_gyro_calib_stat(u8 *gyro_calib_u8);
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_get_sys_calib_stat(u8 *sys_calib_u8);
 
+/*!
+ *  @brief This API used to read all 
+ *  calibration status values from register from 0x35
+ *
+ *  @param sys_calib_u8 : The value of system calib status
+ *  @param gyro_calib_u8 : The value of gyro calib status
+ *  @param accel_calib_u8 : The value of accel calib status
+ *  @param mag_calib_u8 : The value of magcalib status
+ *  
+ *
+ *  @return results of bus communication function
+ *  @retval 0 -> BNO055_SUCCESS
+ *  @retval 1 -> BNO055_ERROR
+ *
+ */
+BNO055_RETURN_FUNCTION_TYPE bno055_get_all_calib_stat(u8 *sys_calib_u8, u8 *gyro_calib_u8, u8 *accel_calib_u8, u8 *mag_calib_u8);
+
 /******************************************************************/
 /**\name FUNCTIONS FOR READING ACCEL,MAG,GYRO AND SYSTEM SELF TEST */
 /******************************************************************/

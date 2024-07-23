@@ -6491,7 +6491,7 @@ BNO055_RETURN_FUNCTION_TYPE bno055_convert_double_temp_celsius(double *temp_d)
  *
  *  @return results of bus communication function
  *  @retval 0 -> BNO055_SUCCESS
- *  @retval 1 -> BNO055_ERROR
+ *  @retval 1 -> BNO055_ERRORu8 *accel_calib_u8
  *
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_get_mag_calib_stat(u8 *mag_calib_u8)
@@ -6680,6 +6680,64 @@ BNO055_RETURN_FUNCTION_TYPE bno055_get_sys_calib_stat(u8 *sys_calib_u8)
                                                       &data_u8r,
                                                       BNO055_GEN_READ_WRITE_LENGTH);
             *sys_calib_u8 = BNO055_GET_BITSLICE(data_u8r, BNO055_SYS_CALIB_STAT);
+        }
+        else
+        {
+            com_rslt = BNO055_ERROR;
+        }
+    }
+
+    return com_rslt;
+}
+
+/*!
+ *  @brief This API used to read all 
+ *  calibration status values from register from 0x35
+ *
+ *  @param sys_calib_u8 : The value of system calib status
+ *  @param gyro_calib_u8 : The value of gyro calib status
+ *  @param accel_calib_u8 : The value of accel calib status
+ *  @param mag_calib_u8 : The value of magcalib status
+ *  
+ *
+ *  @return results of bus communication function
+ *  @retval 0 -> BNO055_SUCCESS
+ *  @retval 1 -> BNO055_ERROR
+ *
+ */
+BNO055_RETURN_FUNCTION_TYPE bno055_get_all_calib_stat(u8 *sys_calib_u8, u8 *gyro_calib_u8, u8 *accel_calib_u8, u8 *mag_calib_u8)
+{
+    /* Variable used to return value of
+     * communication routine*/
+    BNO055_RETURN_FUNCTION_TYPE com_rslt = BNO055_ERROR;
+    u8 data_u8r = BNO055_INIT_VALUE;
+    s8 stat_s8 = BNO055_ERROR;
+
+    /* Check the struct p_bno055 is empty*/
+    if (p_bno055 == NULL)
+    {
+        return BNO055_E_NULL_PTR;
+    }
+    else
+    {
+        /*condition check for page,system calib
+         * available in the page zero*/
+        if (p_bno055->page_id != BNO055_PAGE_ZERO)
+        {
+            /* Write the page zero*/
+            stat_s8 = bno055_write_page_id(BNO055_PAGE_ZERO);
+        }
+        if ((stat_s8 == BNO055_SUCCESS) || (p_bno055->page_id == BNO055_PAGE_ZERO))
+        {
+            /* Read the system calib */
+            com_rslt = p_bno055->BNO055_BUS_READ_FUNC(p_bno055->dev_addr,
+                                                      BNO055_SYS_CALIB_STAT_REG,
+                                                      &data_u8r,
+                                                      BNO055_GEN_READ_WRITE_LENGTH);
+            *sys_calib_u8 = BNO055_GET_BITSLICE(data_u8r, BNO055_SYS_CALIB_STAT);
+            *gyro_calib_u8 = BNO055_GET_BITSLICE(data_u8r, BNO055_GYRO_CALIB_STAT);
+            *accel_calib_u8 = BNO055_GET_BITSLICE(data_u8r, BNO055_ACCEL_CALIB_STAT);
+            *mag_calib_u8 = BNO055_GET_BITSLICE(data_u8r, BNO055_MAG_CALIB_STAT); 
         }
         else
         {
